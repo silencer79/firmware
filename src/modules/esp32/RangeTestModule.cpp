@@ -12,7 +12,7 @@
 //#include <assert.h>
 
 /*
-    As a sender, I can send packets every n seconds. These packets include an incremented PacketID.
+    As a sender, I can send packets every n-seonds. These packets include an incramented PacketID.
     As a receiver, I can receive packets from multiple senders. These packets can be saved to the Filesystem.
 */
 
@@ -36,12 +36,12 @@ int32_t RangeTestModule::runOnce()
         without having to configure it from the PythonAPI or WebUI.
     */
 
-    // moduleConfig.range_test.enabled = 1;
-    // moduleConfig.range_test.sender = 30;
+    //moduleConfig.range_test.enabled = 1;
+    //moduleConfig.range_test.sender = 30;
     // moduleConfig.range_test.save = 1;
 
     // Fixed position is useful when testing indoors.
-    // config.position.fixed_position = 1;
+    // radioConfig.preferences.fixed_position = 1;
 
     uint32_t senderHeartbeat = moduleConfig.range_test.sender * 1000;
 
@@ -57,8 +57,7 @@ int32_t RangeTestModule::runOnce()
                 return (5000); // Sending first message 5 seconds after initilization.
             } else {
                 DEBUG_MSG("Initializing Range Test Module -- Receiver\n");
-                return (INT32_MAX);
-                // This thread does not need to run as a receiver
+                return (500);
             }
 
         } else {
@@ -71,7 +70,8 @@ int32_t RangeTestModule::runOnce()
                 DEBUG_MSG("gpsStatus->getLongitude()    %d\n", gpsStatus->getLongitude());
                 DEBUG_MSG("gpsStatus->getHasLock()      %d\n", gpsStatus->getHasLock());
                 DEBUG_MSG("gpsStatus->getDOP()          %d\n", gpsStatus->getDOP());
-                DEBUG_MSG("fixed_position()             %d\n", config.position.fixed_position);
+                DEBUG_MSG("gpsStatus->getHasLock()      %d\n", gpsStatus->getHasLock());
+                DEBUG_MSG("pref.fixed_position()        %d\n", config.position.fixed_position);
 
                 // Only send packets if the channel is less than 25% utilized.
                 if (airTime->channelUtilizationPercent() < 25) {
@@ -82,11 +82,11 @@ int32_t RangeTestModule::runOnce()
 
                 return (senderHeartbeat);
             } else {
-                return (INT32_MAX);
-                // This thread does not need to run as a receiver
+                // Otherwise, we're a receiver.
+
+                return (500);
             }
-
-
+            // TBD
         }
 
     } else {
@@ -220,8 +220,6 @@ bool RangeTestModuleRadio::appendFile(const MeshPacket &mp)
         DEBUG_MSG("Filesystem doesn't have enough free space. Aborting write.\n");
         return 0;
     }
-
-    FSCom.mkdir("/static");
 
     // If the file doesn't exist, write the header.
     if (!FSCom.exists("/static/rangetest.csv")) {

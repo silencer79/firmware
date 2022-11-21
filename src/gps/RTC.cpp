@@ -44,11 +44,7 @@ void readFromRTC()
     if(rtc_found == PCF8563_RTC) {
         uint32_t now = millis();
         PCF8563_Class rtc;
-#ifdef RTC_USE_WIRE1
-        rtc.begin(Wire1);
-#else
         rtc.begin();
-#endif
         auto tc = rtc.getDateTime();
         tm t;
         t.tm_year = tc.year - 1900;
@@ -114,11 +110,7 @@ bool perhapsSetRTC(RTCQuality q, const struct timeval *tv)
 #elif defined(PCF8563_RTC)
         if(rtc_found == PCF8563_RTC) {
             PCF8563_Class rtc;
-#ifdef RTC_USE_WIRE1
-        rtc.begin(Wire1);
-#else
-        rtc.begin();
-#endif
+            rtc.begin();
             tm *t = localtime(&tv->tv_sec);
             rtc.setDateTime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
             DEBUG_MSG("PCF8563_RTC setDateTime %02d-%02d-%02d %02d:%02d:%02d %ld\n", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, tv->tv_sec);

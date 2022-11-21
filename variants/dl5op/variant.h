@@ -1,22 +1,14 @@
 // #define BUTTON_NEED_PULLUP // if set we need to turn on the internal CPU pullup during sleep
+
 #define I2C_SDA 21
 #define I2C_SCL 22
 
 #define BUTTON_PIN 0     // The middle button GPIO on the T-Beam
-#define BATTERY_PIN 36 // A battery voltage measurement pin, voltage divider connected here to measure battery voltage
-// ratio of voltage divider = 2.0 (R42=100k, R43=100k)
-#define ADC_MULTIPLIER 2.11 // 2.0 + 10% for correction of display undervoltage.
-#define EXT_NOTIFY_OUT 25 // Default pin to use for Ext Notify Module.
 //#define BUTTON_PIN_ALT 13 // Alternate GPIO for an external button if needed. Does anyone use this? It is not documented anywhere.
-
+#define EXT_NOTIFY_OUT 25 // Default pin to use for Ext Notify Module.
 
 #define LED_INVERTED 1
 #define LED_PIN 12 // Newer tbeams (1.1) have an extra led on GPIO4
-
-#undef GPS_RX_PIN
-#undef GPS_TX_PIN
-#define GPS_RX_PIN 17 // per @der_bear on the forum, 36 is incorrect for this board type and 15 is a better pick
-#define GPS_TX_PIN 16
 
 // TTGO uses a common pinout for their SX1262 vs RF95 modules - both can be enabled and we will probe at runtime for RF95 and if
 // not found then probe for SX1262

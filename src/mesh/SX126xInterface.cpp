@@ -25,11 +25,11 @@ bool SX126xInterface<T>::init()
     pinMode(SX126X_POWER_EN, OUTPUT);
 #endif
 
-#if defined(SX126X_RXEN) && (SX126X_RXEN != RADIOLIB_NC) // set not rx or tx mode
+#ifdef SX126X_RXEN                  // set not rx or tx mode
     digitalWrite(SX126X_RXEN, LOW); // Set low before becoming an output
     pinMode(SX126X_RXEN, OUTPUT);
 #endif
-#if defined(SX126X_TXEN) && (SX126X_TXEN != RADIOLIB_NC)
+#ifdef SX126X_TXEN
     digitalWrite(SX126X_TXEN, LOW);
     pinMode(SX126X_TXEN, OUTPUT);
 #endif
@@ -66,7 +66,7 @@ bool SX126xInterface<T>::init()
     DEBUG_MSG("Current limit set to %f\n", currentLimit);
     DEBUG_MSG("Current limit set result %d\n", res);
 
-#if defined(SX126X_TXEN) && (SX126X_TXEN != RADIOLIB_NC)
+#ifdef SX126X_TXEN
     // lora.begin sets Dio2 as RF switch control, which is not true if we are manually controlling RX and TX
     if (res == RADIOLIB_ERR_NONE)
         res = lora.setDio2AsRfSwitch(true);
@@ -166,16 +166,12 @@ void SX126xInterface<T>::setStandby()
     checkNotification(); // handle any pending interrupts before we force standby
     
     int err = lora.standby();
-
-    if (err != RADIOLIB_ERR_NONE)
-        DEBUG_MSG("SX126x standby failed with error %d\n", err);
-
     assert(err == RADIOLIB_ERR_NONE);
 
-#if defined(SX126X_RXEN) && (SX126X_RXEN != RADIOLIB_NC) // we have RXEN/TXEN control - turn off RX and TX power
+#ifdef SX126X_RXEN // we have RXEN/TXEN control - turn off RX and TX power
     digitalWrite(SX126X_RXEN, LOW);
 #endif
-#if defined(SX126X_TXEN) && (SX126X_TXEN != RADIOLIB_NC)
+#ifdef SX126X_TXEN
     digitalWrite(SX126X_TXEN, LOW);
 #endif
 
@@ -200,10 +196,10 @@ void SX126xInterface<T>::addReceiveMetadata(MeshPacket *mp)
 template<typename T>
 void SX126xInterface<T>::configHardwareForSend()
 {
-#if defined(SX126X_TXEN) && (SX126X_TXEN != RADIOLIB_NC) // we have RXEN/TXEN control - turn on TX power / off RX power
+#ifdef SX126X_TXEN // we have RXEN/TXEN control - turn on TX power / off RX power
     digitalWrite(SX126X_TXEN, HIGH);
 #endif
-#if defined(SX126X_RXEN) && (SX126X_RXEN != RADIOLIB_NC)
+#ifdef SX126X_RXEN
     digitalWrite(SX126X_RXEN, LOW);
 #endif
 
@@ -222,10 +218,10 @@ void SX126xInterface<T>::startReceive()
 
     setStandby();
 
-#if defined(SX126X_RXEN) && (SX126X_RXEN != RADIOLIB_NC) // we have RXEN/TXEN control - turn on RX power / off TX power
+#ifdef SX126X_RXEN // we have RXEN/TXEN control - turn on RX power / off TX power
     digitalWrite(SX126X_RXEN, HIGH);
 #endif
-#if defined(SX126X_TXEN) && (SX126X_TXEN != RADIOLIB_NC)
+#ifdef SX126X_TXEN
     digitalWrite(SX126X_TXEN, LOW);
 #endif
   
